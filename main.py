@@ -12,6 +12,7 @@ from routes.chat_routes import router as chat_router
 from routes.assessment_routes import router as assessment_router
 from routes.statistics_routes import router as statistics_router
 from routes.auth_routes import router as auth_router
+from routes.progress_routes import router as progress_router
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -85,6 +86,7 @@ app.include_router(chat_router)
 app.include_router(assessment_router)
 app.include_router(statistics_router)
 app.include_router(auth_router)
+app.include_router(progress_router)
 
 
 @app.on_event("startup")
