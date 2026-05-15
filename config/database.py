@@ -22,8 +22,19 @@ def get_connection():
 
 
 def init_db():
-    """Создать таблицы, если их нет."""
-    conn = get_connection()
+    """Создать таблицы, если их нет. Ждём появления БД до 30 секунд."""
+    import time
+    import psycopg2
+    last_err = None
+    for _ in range(30):
+        try:
+            conn = get_connection()
+            break
+        except psycopg2.OperationalError as e:
+            last_err = e
+            time.sleep(1)
+    else:
+        raise last_err  # type: ignore[misc]
     cur = conn.cursor()
 
     cur.execute("""
