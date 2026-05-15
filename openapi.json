@@ -1,0 +1,691 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AlgoMind API",
+    "description": "\n    API для подготовки к ОГЭ по информатике с ИИ-ментором.\n\n    ## Возможности\n\n    * **Авторизация** — регистрация, вход, проверка токена\n    * **Задачи** — получение списка задач ОГЭ по темам, проверка ответов\n    * **AI-чат** — общение с ИИ-ментором на базе DeepSeek\n    * **Оценка знаний** — вступительное тестирование по темам\n    * **Статистика** — прогресс пользователя по темам\n\n    ## Форматы\n\n    API принимает и возвращает JSON. Аутентификация через Bearer-токен в заголовке `Authorization`.\n    ",
+    "contact": {
+      "name": "AlgoMind Team",
+      "url": "https://algomind.app"
+    },
+    "license": {
+      "name": "MIT"
+    },
+    "version": "0.3.0"
+  },
+  "paths": {
+    "/problems": {
+      "get": {
+        "tags": [
+          "📝 Задачи"
+        ],
+        "summary": "Все задачи",
+        "description": "Возвращает список всех задач ОГЭ по информатике сгруппированных по темам.",
+        "operationId": "list_problems_problems_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/problems/{problem_id}": {
+      "get": {
+        "tags": [
+          "📝 Задачи"
+        ],
+        "summary": "Задача по ID",
+        "description": "Возвращает конкретную задачу по её идентификатору (например, t1-p1).",
+        "operationId": "get_problem_problems__problem_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Problem Id"
+            },
+            "name": "problem_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check-answer": {
+      "post": {
+        "tags": [
+          "📝 Задачи"
+        ],
+        "summary": "Проверить ответ",
+        "description": "Проверяет ответ пользователя на задачу. Сравнивает с правильным ответом и возвращает результат с объяснением.",
+        "operationId": "check_answer_endpoint_check_answer_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckAnswerRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckAnswerResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chat": {
+      "post": {
+        "tags": [
+          "🤖 AI-чат"
+        ],
+        "summary": "Отправить сообщение в чат",
+        "description": "Отправляет сообщение ИИ-помощнику на базе DeepSeek. Может объяснить решение задачи или ответить на вопросы.",
+        "operationId": "chat_chat_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/assessment/topics": {
+      "get": {
+        "tags": [
+          "📊 Оценка"
+        ],
+        "summary": "Темы ОГЭ",
+        "description": "Возвращает список всех тем ОГЭ по информатике с эмодзи для отображения.",
+        "operationId": "get_topics_endpoint_assessment_topics_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/assessment/test-problems": {
+      "get": {
+        "tags": [
+          "📊 Оценка"
+        ],
+        "summary": "Задачи для теста",
+        "description": "Возвращает случайные задачи для вступительного теста. Количество задаётся параметром count.",
+        "operationId": "get_test_problems_assessment_test_problems_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Count",
+              "default": 3
+            },
+            "name": "count",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/assessment/entry-questions": {
+      "get": {
+        "tags": [
+          "📊 Оценка"
+        ],
+        "summary": "Вопросы вступительного теста",
+        "description": "Возвращает вопросы вступительного тестирования с вариантами ответов.",
+        "operationId": "get_entry_questions_endpoint_assessment_entry_questions_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/assessment/calculate-level": {
+      "post": {
+        "tags": [
+          "📊 Оценка"
+        ],
+        "summary": "Рассчитать уровень",
+        "description": "Принимает ответы на вступительный тест и возвращает уровень ученика с персональным роадмапом.",
+        "operationId": "calculate_level_endpoint_assessment_calculate_level_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssessmentSubmit"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats": {
+      "get": {
+        "tags": [
+          "📈 Статистика"
+        ],
+        "summary": "Статистика пользователя",
+        "description": "Возвращает общую статистику: сколько задач решено, прогресс по темам и т.д.",
+        "operationId": "stats_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "🔐 Авторизация"
+        ],
+        "summary": "Регистрация нового пользователя",
+        "description": "Создаёт нового пользователя с указанным именем и паролем. Возвращает токен для авторизации.",
+        "operationId": "register_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "🔐 Авторизация"
+        ],
+        "summary": "Вход пользователя",
+        "description": "Авторизует пользователя по имени и паролю. Возвращает токен для дальнейших запросов.",
+        "operationId": "login_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/verify": {
+      "post": {
+        "tags": [
+          "🔐 Авторизация"
+        ],
+        "summary": "Проверка токена",
+        "description": "Проверяет, действителен ли переданный токен. Возвращает информацию о пользователе.",
+        "operationId": "verify_auth_verify_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AssessmentSubmit": {
+        "properties": {
+          "answers": {
+            "type": "object",
+            "title": "Answers",
+            "description": "Ответы на вступительный тест"
+          },
+          "test_results": {
+            "type": "object",
+            "title": "Test Results",
+            "description": "Результаты тестовых задач: {problem_id: {correct: bool}}"
+          }
+        },
+        "type": "object",
+        "required": [
+          "answers"
+        ],
+        "title": "AssessmentSubmit"
+      },
+      "AuthResponse": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "token",
+          "username",
+          "user_id"
+        ],
+        "title": "AuthResponse"
+      },
+      "ChatMessage": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role",
+            "description": "'user' или 'assistant'"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "content"
+        ],
+        "title": "ChatMessage"
+      },
+      "ChatRequest": {
+        "properties": {
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/ChatMessage"
+            },
+            "type": "array",
+            "title": "Messages"
+          },
+          "problem_id": {
+            "type": "string",
+            "title": "Problem Id",
+            "description": "ID задачи, если чат идёт в контексте задачи"
+          }
+        },
+        "type": "object",
+        "required": [
+          "messages"
+        ],
+        "title": "ChatRequest"
+      },
+      "CheckAnswerRequest": {
+        "properties": {
+          "problem_id": {
+            "type": "string",
+            "title": "Problem Id"
+          },
+          "user_answer": {
+            "type": "string",
+            "title": "User Answer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "problem_id",
+          "user_answer"
+        ],
+        "title": "CheckAnswerRequest"
+      },
+      "CheckAnswerResponse": {
+        "properties": {
+          "is_correct": {
+            "type": "boolean",
+            "title": "Is Correct"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          },
+          "correct_answer": {
+            "type": "string",
+            "title": "Correct Answer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "is_correct",
+          "explanation",
+          "correct_answer"
+        ],
+        "title": "CheckAnswerResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LoginRequest": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "LoginRequest"
+      },
+      "RegisterRequest": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "title": "Username",
+            "description": "Имя пользователя (минимум 3 символа)"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 4,
+            "title": "Password",
+            "description": "Пароль (минимум 4 символа)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "RegisterRequest"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VerifyTokenRequest": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token",
+            "description": "Токен для проверки"
+          }
+        },
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "title": "VerifyTokenRequest"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "📝 Задачи",
+      "description": "Просмотр задач ОГЭ по информатике и проверка ответов."
+    },
+    {
+      "name": "🤖 AI-чат",
+      "description": "Общение с ИИ-ментором на базе DeepSeek для помощи в решении задач."
+    },
+    {
+      "name": "📊 Оценка",
+      "description": "Вступительное тестирование для оценки уровня знаний ученика."
+    },
+    {
+      "name": "📈 Статистика",
+      "description": "Статистика прогресса пользователя по темам."
+    },
+    {
+      "name": "🔐 Авторизация",
+      "description": "Регистрация, вход и проверка токена доступа."
+    }
+  ]
+}
