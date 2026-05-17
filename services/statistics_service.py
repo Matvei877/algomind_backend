@@ -11,8 +11,8 @@ import os
 import time
 from collections import defaultdict
 
-from data.problems import get_problem_by_id
-from data.assessment import TOPICS
+from services.problem_service import get_problem_by_id
+from services.assessment_service import TOPICS
 
 STATS_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "user_stats.json")
 

@@ -1,15 +1,24 @@
 """Сервис для работы с задачами."""
-
+import json
 import logging
-
-from data.problems import PROBLEMS, get_problem_by_id as _get_problem_by_id
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
+
+_DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "problems.json"
+PROBLEMS = json.loads(_DATA_PATH.read_text(encoding="utf-8"))
 
 
 def get_all_problems() -> list:
     """Вернуть список всех задач."""
     return PROBLEMS
+
+
+def _get_problem_by_id(problem_id: str) -> dict | None:
+    for p in PROBLEMS:
+        if p["id"] == problem_id:
+            return p
+    return None
 
 
 def get_problem_by_id(problem_id: str) -> dict | None:

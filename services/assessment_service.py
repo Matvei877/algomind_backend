@@ -6,9 +6,19 @@
 3. Результатов решения случайных задач
 """
 
+import json
 import random
-from data.assessment import TOPICS, ENTRY_QUESTIONS
-from data.problems import get_all_problems
+from pathlib import Path
+
+_DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "assessment.json"
+_raw = json.loads(_DATA_PATH.read_text(encoding="utf-8"))
+
+TOPICS = {int(k): v for k, v in _raw["topics"].items()}
+ENTRY_QUESTIONS = _raw["entry_questions"]
+
+# Проблемы нужны только для select_test_problems
+_PROBLEMS_PATH = Path(__file__).resolve().parent.parent / "data" / "problems.json"
+_PROBLEMS = json.loads(_PROBLEMS_PATH.read_text(encoding="utf-8"))
 
 
 def get_topics() -> dict:
@@ -23,7 +33,7 @@ def get_entry_questions() -> dict:
 
 def select_test_problems(count: int = 3) -> list:
     """Выбрать ровно `count` случайных задач из разных тем (по одной из темы)."""
-    all_problems = get_all_problems()
+    all_problems = _PROBLEMS
     if len(all_problems) <= count:
         return all_problems
 

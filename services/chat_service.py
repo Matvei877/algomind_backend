@@ -1,6 +1,8 @@
 """Сервис для работы с DeepSeek AI чатом."""
 
+import json
 import logging
+from pathlib import Path
 
 from openai import OpenAI
 
@@ -12,9 +14,18 @@ from config.settings import (
     DEEPSEEK_TEMPERATURE,
     SYSTEM_PROMPT,
 )
-from data.problems import get_problem_by_id
 
 logger = logging.getLogger(__name__)
+
+_PROBLEMS_PATH = Path(__file__).resolve().parent.parent / "data" / "problems.json"
+_PROBLEMS = json.loads(_PROBLEMS_PATH.read_text(encoding="utf-8"))
+
+
+def _get_problem_by_id(problem_id: str) -> dict | None:
+    for p in _PROBLEMS:
+        if p["id"] == problem_id:
+            return p
+    return None
 
 
 def _build_client() -> OpenAI | None:
@@ -34,7 +45,7 @@ def build_messages(problem_id: str | None, messages: list[dict]) -> list[dict]:
     system_text = SYSTEM_PROMPT
 
     if problem_id:
-        problem = get_problem_by_id(problem_id)
+        problem = _get_problem_by_id(problem_id)
         if problem:
             system_text += (
                 f"\n\nКонтекст задачи (задание ОГЭ №{problem['topic']}):\n"

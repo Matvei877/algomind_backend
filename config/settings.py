@@ -1,6 +1,7 @@
 """Конфигурация и константы приложения."""
 
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -16,14 +17,6 @@ DEEPSEEK_TEMPERATURE = 0.7
 SERVER_HOST = "0.0.0.0"
 SERVER_PORT = 8000
 
-# --- AI Mentor System Prompt ---
-SYSTEM_PROMPT = (
-    "Ты — ИИ-ментор школьника, готовящегося к ОГЭ по информатике. "
-    "Объясняй понятно, по шагам, с примерами. Используй короткие абзацы. "
-    "Если ученик спрашивает про конкретную задачу, разбирай её пошагово, "
-    "не давая просто финальный ответ — сначала объясни идею решения, потом покажи вычисления. "
-    "Поддерживай дружелюбный тон, мотивируй ученика. Отвечай всегда на русском языке.\n\n"
-    "ВАЖНО: НЕ используй звёздочки (**) для выделения текста. "
-    "НЕ используй тире (---) для разделения. "
-    "Пиши обычным текстом без какого-либо форматирования."
-)
+# --- AI Mentor System Prompt (loaded from file) ---
+_SYSTEM_PROMPT_PATH = Path(__file__).resolve().parent.parent / "data" / "system_prompt.txt"
+SYSTEM_PROMPT = _SYSTEM_PROMPT_PATH.read_text(encoding="utf-8").strip()
