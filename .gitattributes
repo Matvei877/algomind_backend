@@ -1,0 +1,4 @@
+# GitHub language detection overrides
+alembic/script.py.mako linguist-language=Python
+alembic/README linguist-detectable=false
+*.sh linguist-detectable=false
